@@ -20,21 +20,21 @@ This sample includes:
   installing and deploying your application on the Amazon EC2 instance
 * template.yml - this file contains the description of AWS resources used by AWS
   CloudFormation to deploy your infrastructure
-* template-configuration.json - this file contains the project ARN with placeholders used for tagging resources with the project ID  
 
 
 Getting Started
 ---------------
 
-These directions assume you want to develop on your development environment or a Cloud9 environment, and not
+These directions assume you want to develop on your local computer, and not
 from the Amazon EC2 instance itself. If you're on the Amazon EC2 instance, the
 virtual environment is already set up for you, and you can start working on the
 code.
 
 To work on the sample code, you'll need to clone your project's repository to your
-local computer. If you haven't, do that first. You can find instructions in the AWS CodeStar user guide at https://docs.aws.amazon.com/codestar/latest/userguide/getting-started.html#clone-repo.
+local computer. If you haven't, do that first. You can find instructions in the
+AWS CodeStar user guide.
 
-1. Install dotnet. See https://www.microsoft.com/net/core
+1. Install dotnet.  See https://www.microsoft.com/net/core
 
 2. Build the application
 
@@ -87,7 +87,7 @@ your project's worker roles. After you push the template change, AWS CodeStar
 and AWS CloudFormation provision the resources for you.
 
 See the AWS CodeStar user guide for instructions to modify your template:
-https://docs.aws.amazon.com/codestar/latest/userguide/how-to-change-project.html#customize-project-template
+https://docs.aws.amazon.com/codestar/latest/userguide/how-to-change-project#customize-project-template.html
 
 What Should I Do Before Running My Project in Production?
 ------------------

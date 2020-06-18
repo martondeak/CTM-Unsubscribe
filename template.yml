@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Conditions:
   UseSubnet: !Not [!Equals [!Ref 'SubnetId', subnet-none]]
-  IsBurstableInstanceType: !Equals [!Select [0, !Split ['.', !Ref InstanceType]], t3]
 Transform:
 - AWS::CodeStar
 Parameters:
@@ -12,8 +11,8 @@ Parameters:
     Type: String
     Description: The type of Amazon EC2 Linux instances that will be launched for this project.
   WebAppInstanceProfile:
-     Type: String
-     Description: The IAM role that will be created for the Amazon EC2 Linux instances.
+    Type: String
+    Description: The IAM role that will be created for the Amazon EC2 Linux instances.
   ImageId:
     Type: String
     Description: The Amazon EC2 Linux instance Amazon Machine Image (AMI), which designates the configuration of the new instance.
@@ -26,16 +25,10 @@ Parameters:
   SubnetId:
     Type: String
     Description: The name of the VPC subnet to use for Amazon EC2 instances launched for this project.
-  Stage:
-    Type: String
-    Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
-    Default: ''
 Resources:
   WebApp01:
     Description: The installation and configuration commands this project will use to create instances that support this sample web application.
     Properties:
-      CreditSpecification:
-        CPUCredits: !If [IsBurstableInstanceType, unlimited, !Ref 'AWS::NoValue']
       IamInstanceProfile: !Ref 'WebAppInstanceProfile'
       ImageId: !Ref 'ImageId'
       InstanceType: !Ref 'InstanceType'
@@ -51,26 +44,21 @@ Resources:
         - !Ref 'AWS::NoValue'
       Tags:
       - Key: Environment
-        Value: !Sub '${ProjectId}-WebApp${Stage}'
+        Value: !Sub '${ProjectId}-WebApp'
       - Key: Name
-        Value: !Sub '${ProjectId}-WebApp${Stage}'
+        Value: !Sub '${ProjectId}-WebApp'
       UserData:
         Fn::Base64:
           Fn::Sub: |
             #!/bin/bash -ex
-            # Install Ruby
-            yum -y install ruby-2.0.0.648-29.amzn2
-            # Install the AWS CodeDeploy Agent
-            cd /home/ec2-user/
-            wget https://aws-codedeploy-${AWS::Region}.s3.amazonaws.com/latest/codedeploy-agent.noarch.rpm
-            yum -y install codedeploy-agent.noarch.rpm
-            # Install the Amazon CloudWatch Logs Agent
-            yum install -y awslogs-1.1.4
-            mkdir -p /var/awslogs/etc/config
-            cp codedeploy_logs.conf /var/awslogs/etc/config/
-            sed -i 's/us-east-1/${AWS::Region}/g' /etc/awslogs/awscli.conf
-            # Start the service logs
-            systemctl start awslogsd
+            # Install the AWS CodeDeploy Agent (https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install-ubuntu.html)
+            apt-get update -y
+            apt-get install ruby -y
+            cd /home/ubuntu/
+            wget https://aws-codedeploy-${AWS::Region}.s3.amazonaws.com/latest/install
+            mv ./install ./install-codedeploy-agent
+            chmod +x ./install-codedeploy-agent
+            ./install-codedeploy-agent auto
     Type: AWS::EC2::Instance
   WebAppSG:
     Description: The default Amazon EC2 security group that will be created for the Amazon EC2 Linux instances.

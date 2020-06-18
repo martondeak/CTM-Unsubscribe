@@ -1,10 +1,17 @@
 #!/bin/bash
+cd /home/ubuntu/
 
-cd /home/ec2-user/
+# install dotnet core
+# https://www.microsoft.com/net/core#linuxubuntu
+if [ ! -f /usr/bin/dotnet ]; then
+    apt-get install libunwind8
 
-# Install dotnet core
-rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
-yum -y install dotnet-sdk-3.1
+    wget https://download.microsoft.com/download/8/A/7/8A765126-50CA-4C6F-890B-19AE47961E4B/dotnet-sdk-2.1.402-linux-x64.tar.gz -P /opt/dotnet/ \
+    && sha512sum -c <<< "dd7f15a8202ffa2a435b7289865af4483bb0f642ffcf98a1eb10464cb9c51dd1d771efbb6120f129fe9666f62707ba0b7c476cf1fd3536d3a29329f07456de48 /opt/dotnet/dotnet-sdk-2.1.402-linux-x64.tar.gz" \
+    && tar -xvzf /opt/dotnet/dotnet-sdk-2.1.402-linux-x64.tar.gz -C /opt/dotnet/ \
+    && ln -sf /opt/dotnet/dotnet /usr/bin/dotnet \
+    && rm /opt/dotnet/dotnet-sdk-2.1.402-linux-x64.tar.gz
+fi
 
-# First time running dotnet tool requires setting up package cache
+# first time running dotnet tool requires setting up package cache
 dotnet nuget
